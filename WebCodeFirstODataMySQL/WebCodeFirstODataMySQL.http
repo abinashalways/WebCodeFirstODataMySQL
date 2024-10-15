@@ -1,0 +1,6 @@
+@WebCodeFirstODataMySQL_HostAddress = http://localhost:5252
+
+GET {{WebCodeFirstODataMySQL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
