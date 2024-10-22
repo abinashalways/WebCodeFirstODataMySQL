@@ -1,18 +1,9 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.OData.Formatter;
-using Microsoft.AspNetCore.OData.Query;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System;
-using System.Threading.Tasks;
 using WebCodeFirstODataMySQL.Database_Context;
 
 using WebCodeFirstODataMySQL.Models;
-using Microsoft.Extensions.Configuration;
 
 namespace WebCodeFirstODataMySQL.Repository
 {
@@ -38,46 +29,47 @@ namespace WebCodeFirstODataMySQL.Repository
 
         }
 
-        public async Task<List<EmployeeDto>> GetEmployees()
+        public async Task<List<Employee>> GetEmployees()
         {
             var urlHelper = _urlHelperFactory.GetUrlHelper(new ActionContext
             {
                 HttpContext = _httpContextAccessor.HttpContext!
             });
 
+            #region Linq Query
             var employees = await _context.Employee
                 .Include(e => e.Department)
                 .ThenInclude(d => d!.Location)
-
-                //.ToListAsync();
-                .Select(e => new EmployeeDto
-                {
-                    EmpId = e.EmpId,
-                    EName = e.EName,
-                    Designation = e.Designation,
-                    Email = e.Email,
-                    ContactNo = e.ContactNo,
-                    DOJ = e.DOJ,
-                    Salary = e.Salary,
-                    PhotoUrl = urlHelper.Action("GetPhoto", "Employee", new { empId = e.EmpId }, _httpContextAccessor.HttpContext!.Request.Scheme),
-                    DeptID = e.DeptID,
-                    Department = new DepartmentDto
-                    {
-                        DName = e.Department!.DName,
-                        LocationID = e.Department.LocationID,
-                        Location = new LocationDto
-                        {
-                            LocationName = e.Department.Location!.LocationName,
-                            Country = e.Department.Location.Country
-                        }
-                    }
-                })
                 .ToListAsync();
+            #endregion
+            //.Select(e => new EmployeeDto
+            //{
+            //    EmpId = e.EmpId,
+            //    EName = e.EName,
+            //    Designation = e.Designation,
+            //    Email = e.Email,
+            //    ContactNo = e.ContactNo,
+            //    DOJ = e.DOJ,
+            //    Salary = e.Salary,
+            //    PhotoUrl = urlHelper.Action("GetPhoto", "Employee", new { empId = e.EmpId }, _httpContextAccessor.HttpContext!.Request.Scheme),
+            //    DeptID = e.DeptID,
+            //    Department = new DepartmentDto
+            //    {
+            //        DName = e.Department!.DName,
+            //        LocationID = e.Department.LocationID,
+            //        Location = new LocationDto
+            //        {
+            //            LocationName = e.Department.Location!.LocationName,
+            //            Country = e.Department.Location.Country
+            //        }
+            //    }
+            //})
+            //.ToListAsync();
 
             return employees;
         }
 
-        public async Task<EmployeeDto> GetEmployee(Guid id)
+        public async Task<Employee> GetEmployee(Guid id)
         {
             var employee = await _context.Employee
                 .Include(e => e.Department)
@@ -95,36 +87,41 @@ namespace WebCodeFirstODataMySQL.Repository
                 HttpContext = _httpContextAccessor.HttpContext!
             });
 
-            var employeeDto = new EmployeeDto
-            {
-                EmpId = employee.EmpId,
-                EName = employee.EName,
-                Designation = employee.Designation,
-                Email = employee.Email,
-                ContactNo = employee.ContactNo,
-                DOJ = employee.DOJ,
-                Salary = employee.Salary,
-                PhotoUrl = urlHelper.Action("GetPhoto", "Employee", new { empId = employee.EmpId }, _httpContextAccessor.HttpContext!.Request.Scheme), 
-                DeptID = employee.DeptID,
-                Department = new DepartmentDto
-                {
-                    DName = employee.Department?.DName,
-                    LocationID = employee.Department?.LocationID,
-                    Location = new LocationDto
-                    {
-                        LocationName = employee.Department?.Location?.LocationName,
-                        Country = employee.Department?.Location?.Country
-                    }
-                }
-            };
 
-            return employeeDto;
+            //  employee.Photo= urlHelper.Action("GetPhoto", "Employee", new { empId = employee.EmpId }, _httpContextAccessor.HttpContext!.Request.Scheme)
+
+            return employee;
+            //var employeeDto = new EmployeeDto
+            //{
+            //    EmpId = employee.EmpId,
+            //    EName = employee.EName,
+            //    Designation = employee.Designation,
+            //    Email = employee.Email,
+            //    ContactNo = employee.ContactNo,
+            //    DOJ = employee.DOJ,
+            //    Salary = employee.Salary,
+            //    PhotoUrl = urlHelper.Action("GetPhoto", "Employee", new { empId = employee.EmpId }, _httpContextAccessor.HttpContext!.Request.Scheme), 
+            //    DeptID = employee.DeptID,
+            //    Department = new DepartmentDto
+            //    {
+            //        DName = employee.Department?.DName,
+            //        LocationID = employee.Department?.LocationID,
+            //        Location = new LocationDto
+            //        {
+            //            LocationName = employee.Department?.Location?.LocationName,
+            //            Country = employee.Department?.Location?.Country
+            //        }
+            //    }
+            //};
+
+           // return employeeDto;
         }
     
-        public async Task<IActionResult> GetCount()
+        public async Task<int> GetCount()
         {
             var count = await _context.Employee.Include(e => e.Department).ThenInclude(d => d!.Location).CountAsync();
-                    return new OkObjectResult( count);
+                    //return new OkObjectResult( count);
+                    return count;
         }
 
         public async Task<IActionResult> CreateAll([FromForm] Employee? employee, IFormFile? file)
@@ -269,7 +266,7 @@ namespace WebCodeFirstODataMySQL.Repository
             await _context.SaveChangesAsync();
             return new OkObjectResult(employee);
         }
-        public async Task<IActionResult> GetPhoto(Guid empId)
+        public async Task<FileResult> GetPhoto(Guid empId)
         {
             var employee = await _context.Employee.FindAsync(empId);
 
@@ -278,8 +275,22 @@ namespace WebCodeFirstODataMySQL.Repository
                 throw new NotImplementedException ("Photo not found.");
             }
 
-            return new FileContentResult(employee.Photo, "image/jpeg");
+            //return new FileContentResult(employee.Photo, "image/jpeg");    
+
+           
+
+            return GetPic(employee.Photo);
         }
+
+        public FileResult GetPic(byte[] b)
+        {
+
+            return new FileContentResult(b, "image/jpeg");
+        }
+
+
+
+
 
         public async Task<IActionResult> Delete(Guid id)
         {
@@ -408,7 +419,8 @@ namespace WebCodeFirstODataMySQL.Repository
             return new OkObjectResult(new
             {
                 Message = "Employee updated successfully.",
-                UpdatedEmployee = employee
+                UpdatedEmployee = employee,
+              
             });
         }
 

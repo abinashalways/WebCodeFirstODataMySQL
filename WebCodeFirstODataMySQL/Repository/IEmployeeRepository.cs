@@ -6,11 +6,11 @@ namespace WebCodeFirstODataMySQL.Repository
 {
     public interface IEmployeeRepository
     {
-        Task<List<EmployeeDto>> GetEmployees();
-        Task<IActionResult> GetPhoto(Guid empId);
+        Task<List<Employee>> GetEmployees();
+        Task<FileResult> GetPhoto(Guid empId);
 
-        Task<EmployeeDto> GetEmployee(Guid id);
-        Task<IActionResult> GetCount();
+        Task<Employee> GetEmployee(Guid id);
+        Task<int> GetCount();
         Task<IActionResult> CreateAll([FromForm] Employee? employee, IFormFile? file);
         Task<IActionResult> CreateEmployee([FromBody] Employee? employee);
 

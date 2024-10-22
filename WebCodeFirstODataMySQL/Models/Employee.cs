@@ -11,18 +11,18 @@ namespace WebCodeFirstODataMySQL.Models
        // [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
        public Guid? EmpId { get; set; }
 
-       // [Required(ErrorMessage = "Name is Required")]
+     
         [StringLength(50, ErrorMessage = "Name should be within 50 characters")]
         public string? EName { get; set; }
        
         public string? Designation { get; set; }
 
-       // [Required(ErrorMessage = "Email is Required")]
+     
 
         [EmailAddress(ErrorMessage ="Please type correct Mail Id Format")]
         public string? Email { get; set; }
 
-      //  [Required(ErrorMessage = "Contact Number is Required")]
+     
 
         public long? ContactNo { get; set; }
 

@@ -111,8 +111,8 @@ namespace WebCodeFirstODataMySQL.Controllers
         //}
 
 
-        [HttpGet("GetPhoto/{empId}")]
-        public async Task<IActionResult> GetPhoto(Guid empId)
+        [HttpGet("GetPhoto")]
+        public async Task<FileResult> GetPhoto(Guid empId)
         {
             return await _service.GetPhoto(empId);
 
@@ -149,7 +149,7 @@ namespace WebCodeFirstODataMySQL.Controllers
         //}
 
         [EnableQuery]
-          [HttpGet("GetEmployee/{id}")]
+          [HttpGet("GetEmployee")]
        // [ResponseCache(Duration = 60)]
 
         public async Task< IActionResult> GetEmployee([FromODataUri] Guid id)
@@ -181,7 +181,7 @@ namespace WebCodeFirstODataMySQL.Controllers
 
       //  [EnableQuery]
         [HttpGet("$count")]
-        public async Task<IActionResult> GetCount()
+        public async Task<int> GetCount()
         {               
                 return await _service.GetCount();
        
