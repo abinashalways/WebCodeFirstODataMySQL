@@ -37,6 +37,7 @@ namespace WebCodeFirstODataMySQL
 
                 
                 c.OperationFilter<ODataOperationFilter>();
+                
             });
             builder.Services.AddControllers()
     .AddOData(options => options.Select().Expand().Filter().OrderBy().Count().SetMaxTop(100)
@@ -48,7 +49,7 @@ namespace WebCodeFirstODataMySQL
             builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
             builder.Services.AddDbContext<EmpDetailsContext>(options => 
-            options.UseMySql(builder.Configuration.GetConnectionString("EmpConnection"), new MySqlServerVersion(new Version(8, 0, 39)))
+            options.UseMySql(builder.Configuration.GetConnectionString("EmpConnection"), new MySqlServerVersion(new Version(8, 0, 39))).EnableSensitiveDataLogging().LogTo(Console.WriteLine,LogLevel.Information)
             );
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

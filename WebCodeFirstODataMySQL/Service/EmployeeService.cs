@@ -13,7 +13,11 @@ namespace WebCodeFirstODataMySQL.Service
             _employeeRepository = employeeRepository;
         }
 
-        public async Task<List<Employee>> GetEmployees()
+        public async Task<List<EmployeeDto>> GetEmployeesFromOData()
+        {
+            return await _employeeRepository.GetEmployeesFromOData();
+        }
+        public async Task<List<EmployeeDto>> GetEmployees()
         {
            return await _employeeRepository.GetEmployees();
         }
@@ -23,7 +27,7 @@ namespace WebCodeFirstODataMySQL.Service
             return await _employeeRepository.GetPhoto(empId);
         }
 
-       public async Task<Employee> GetEmployee(Guid id)
+       public async Task<EmployeeDto> GetEmployee(Guid id)
         {
             return await _employeeRepository.GetEmployee(id);
         }

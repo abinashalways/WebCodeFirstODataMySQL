@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Validations.Rules;
+using NSwag.Annotations;
 using System.Linq;
 using WebCodeFirstODataMySQL.Database_Context;
 using WebCodeFirstODataMySQL.Models;
@@ -69,6 +71,9 @@ namespace WebCodeFirstODataMySQL.Controllers
         [EnableQuery]
         [HttpGet]
         [Route("GetEmployees")]
+        [ProducesResponseType(typeof(EmployeeDto), statusCode: 200)]
+        [SwaggerResponse(StatusCodes.Status200OK, typeof(EmployeeDto),Description ="Ready")]
+       
         public async Task<IActionResult> GetEmployees() 
         {
             var urlHelper = _urlHelperFactory.GetUrlHelper(ControllerContext);
@@ -77,9 +82,22 @@ namespace WebCodeFirstODataMySQL.Controllers
             
             
         }
+        [EnableQuery]
+        [HttpGet]
+        [Route("GetEmployeesFromOData")]
+        [Produces("application/json")]
+        
+        [ProducesResponseType(typeof(EmployeeDto), StatusCodes.Status200OK)] // Successful response
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)] // For bad requests
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)] // For server errors
+        public async Task<IActionResult> GetEmployeesFromOData()
+        {
+            var urlHelper = _urlHelperFactory.GetUrlHelper(ControllerContext);
+            var employees = await _service.GetEmployeesFromOData();
+            return Ok(employees);
+        }
 
 
-     
 
         /*
          // This one is suitable when we do not deal with custom exception handling it gives us particular type of data with its return type 
