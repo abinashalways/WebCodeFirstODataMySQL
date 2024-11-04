@@ -13,13 +13,16 @@ namespace WebCodeFirstODataMySQL.Repository
 {
     public class EmployeeRepository : IEmployeeRepository
     {
-        private readonly EmpDetailsContext _context;
+        //public class EmployeeRepository(EmpDetailsContext _context, IUrlHelperFactory _urlHelperFactory, IHttpContextAccessor _httpContextAccessor, IConfiguration Configuration) : IEmployeeRepository
+        //{
+
+            private readonly EmpDetailsContext _context;
 
         private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private  readonly IConfiguration Configuration;
-       
-       
+        private readonly IConfiguration Configuration;
+
+
 
 
         public EmployeeRepository
